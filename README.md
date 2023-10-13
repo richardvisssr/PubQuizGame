@@ -13,7 +13,7 @@ Beschrijving van je webapplicatie en wat het doet.
 - [Bijdragen](#bijdragen)
 - [Licentie](#licentie)
 
-## Ontwerp 
+## Ontwerp schetsen 
 
 ### Quizmaster View
 
@@ -69,6 +69,54 @@ Beschrijving van je webapplicatie en wat het doet.
   ]
 }
 ```
+## Client ontwerpen
+
+**State Structure**
+
+1. **Teams:**
+   - Bewaar informatie over elk team, inclusief hun naam, leden en scores.
+
+2. **Quizzmaster:**
+   - Bewaar informatie over de Quizz Master, inclusief hun acties.
+
+3. **Huidige vraag:**
+   - Bewaar informatie over de huidige vraag die wordt weergegeven, inclusief de tekst en categorie.
+
+4. **Antwoorden:**
+   - Bewaar de antwoorden die door teams zijn ingediend voor de huidige vraag, en associeer ze met het team dat elk antwoord heeft ingediend.
+
+5. **Categorieën:**
+   - Bewaar een lijst met beschikbare quizcategorieën.
+
+6. **Ronde informatie:**
+   - Houd de huidige ronde bij, het totaal aantal rondes en welke teams de huidige vraag hebben beantwoord.
+
+**Reducers:**
+
+1. **Teamreductie:**
+   - Beheert de status met betrekking tot teams.
+   - Verwerkt acties voor het toevoegen van teams, het bijwerken van teaminformatie en het bijwerken van teamscores.
+
+2. **QuizzMaster-reductieprogramma:**
+   - Beheert de status met betrekking tot de Quizz Master.
+   - Verwerkt acties voor het weergeven van vragen, het goedkeuren/afkeuren van antwoorden en het besturen van het spel.
+
+3. **Huidige vraagreductie:**
+   - Beheert de status voor de huidige vraag.
+   - Verwerkt acties voor het instellen van de huidige vraag en categorie.
+
+4. **Antwoorden Reducer:**
+   - Beheert de status voor antwoorden die door teams zijn ingediend.
+   - Verwerkt acties voor het indienen van antwoorden, het bijwerken van antwoorden en het wissen van antwoorden voor de volgende vraag.
+
+5. **Categorieën Reducer:**
+   - Beheert de status voor quizcategorieën.
+   - Verwerkt acties voor het laden van beschikbare categorieën en het selecteren van een categorie voor een ronde.
+
+6. **Ronde informatieverkleiner:**
+   - Beheert de status van de huidige ronde en gerelateerde gegevens.
+   - Verwerkt acties om door te gaan naar de volgende ronde, volgt teams die hebben geantwoord en maakt de winnaars bekend.
+
 
 ## Vereisten
 
