@@ -32,41 +32,44 @@ Beschrijving van je webapplicatie en wat het doet.
 ### Quiz
 ```json
 {
-  "_id": UUID,
-  "category": [],
-  "teams": []
+  "_id": UUID,  
+  "teams": [teams],
+  "rounds": [round],
+  "questions": [questions]
 }
 ```
 
-### Quizmaster
+### Questions
 ```json
 {
-  "quizzers": [
-    "category": [
-        "questions":[
-            "question": String,
-            "answer": String,
-        ]
-    ],
+  "text": String,
+  "answer": String,
+  "category": String,
+}
+```
 
-  ],
-  "teams": [
-    "_id": UUID,
-  ],
-  [
-    "verificationCode": Int,
-  ]
+### Round
+```json
+{
+  "text": String,
+  "answer": String,
+  "category": String,
+}
+```
+
+### QuiMaster
+```json
+{
+  "verificationCode": String,
 }
 ```
 
 ### Team
-
 ```json
 {
-  "teams": [
-    "_id": UUID,
-    "name": String,
-  ]
+  "_id": UUID,    
+  "name": String,
+  "score": Number,
 }
 ```
 ## Client ontwerpen
