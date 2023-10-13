@@ -1,12 +1,7 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/nfN6GiDF)
 
-# Webapplicatie Naam
-
-Beschrijving van je webapplicatie en wat het doet.
-
 ## Inhoudsopgave
-- [Webapplicatie Naam](#webapplicatie-naam)
-  - [Inhoudsopgave](#inhoudsopgave)
+- [Quizzer Webapplicatie](#quizzer-webapplicatie)
   - [Ontwerp schetsen](#ontwerp-schetsen)
     - [Quizmaster View](#quizmaster-view)
     - [Quiz View](#quiz-view)
@@ -20,6 +15,11 @@ Beschrijving van je webapplicatie en wat het doet.
   - [Client ontwerpen](#client-ontwerpen)
   - [Vereisten](#vereisten)
   - [Installatie](#installatie)
+
+
+# Quizzer Webapplicatie
+
+Voor het DWA semester moeten wij een single page webapplicatie maken waar teams samen kunnen spelen in een soort pubquiz. De quizmaster kiest vragen uit en deze worden getoond op een beamer. De teams kunnen dan antwoorden op de vragen en de quizmaster kan deze goed of fout keuren. Na iedere vraag wordt de score van de teams bijgewerkt en aan het einde van de quiz wordt de winnaar bekend gemaakt op de beamer.
 
 ## Ontwerp schetsen 
 In de volgende ontwerpschetsen zijn de routes bepaald en de verschillende componenten weergegeven aanhand van gekleurde blokken. 
