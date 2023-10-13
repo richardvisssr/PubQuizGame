@@ -29,11 +29,11 @@ In de volgende ontwerpschetsen zijn de routes bepaald en de verschillende compon
 
 ### Quiz View
 
-![Alt Text](files\Quiz.png?raw=true "Quiz")
+![Alt Text](files/Quiz.png?raw=true "Quiz")
 
 ### Team View
 
-![Alt Text](files\Team.png?raw=true "Team")
+![Alt Text](files/Team.png?raw=true "Team")
 
 ## Database Schema
 In de volgende sectie is het database schema weergegeven. Hierin zijn de verschillende collecties weergegeven waar wij gebruik van maken in mongodb. Zoals te zien is in het schema is er een collectie voor de quiz, de vragen, de rondes, de quizmaster en de teams, sommige collecties zijn met elkaar verbonden door middel van een UUID.
