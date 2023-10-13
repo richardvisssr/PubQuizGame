@@ -38,7 +38,7 @@ In de volgende ontwerpschetsen zijn de routes bepaald en de verschillende compon
 ## Database Schema
 In de volgende sectie is het database schema weergegeven. Hierin zijn de verschillende collecties weergegeven waar wij gebruik van maken in mongodb. Zoals te zien is in het schema is er een collectie voor de quiz, de vragen, de rondes, de quizmaster en de teams, sommige collecties zijn met elkaar verbonden door middel van een UUID.
 ### Quiz
-```json
+```javascript
 {
   "_id": UUID,  
   "teams": [teams],
@@ -48,7 +48,7 @@ In de volgende sectie is het database schema weergegeven. Hierin zijn de verschi
 ```
 
 ### Questions
-```json
+```javascript
 {
   "text": String,
   "answer": String,
@@ -57,7 +57,7 @@ In de volgende sectie is het database schema weergegeven. Hierin zijn de verschi
 ```
 
 ### Round
-```json
+```javascript
 {
   "text": String,
   "answer": String,
@@ -66,14 +66,14 @@ In de volgende sectie is het database schema weergegeven. Hierin zijn de verschi
 ```
 
 ### QuizMaster
-```json
+```javascript
 {
   "verificationCode": String,
 }
 ```
 
 ### Team
-```json
+```javascript
 {
   "_id": UUID,    
   "name": String,
