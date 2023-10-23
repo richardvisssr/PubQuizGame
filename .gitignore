@@ -9,5 +9,5 @@ server/npm-debug.log
 ```
 
 # package.json
-client/package.json
-server/package.json
+client/package-lock.json
+server/package-lock.json
