@@ -2,14 +2,12 @@
 .vscode/
 
 # node modules
-client/node_modules
-client/npm-debug.log
+client/quizzer/node_modules
+client/quizzer/npm-debug.log
 server/node_modules
 server/npm-debug.log
 ```
 
 # package.json
 client/package.json
-client/package-lock.json
 server/package.json
-server/package-lock.json
