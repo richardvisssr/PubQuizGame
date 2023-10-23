@@ -1,0 +1,13 @@
+# Visual Studio Code
+.vscode/
+
+# node modules
+client/quizzer/node_modules
+client/quizzer/npm-debug.log
+server/node_modules
+server/npm-debug.log
+```
+
+# package.json
+client/package.json
+server/package.json
