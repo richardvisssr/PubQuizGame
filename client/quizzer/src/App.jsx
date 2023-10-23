@@ -1,14 +1,13 @@
-import { useState } from 'react'
-import './App.css'
+import "./App.css";
+import GamePinInput from "./components/team/GamePinInput";
+import WaitingScreen from "./components/team/WaitingScreen";
 
 function App() {
-
-
   return (
     <div className="App">
-      <Component/>
+      <WaitingScreen waiting={"questions"}/>
     </div>
-    )
+  );
 }
 
-export default App
+export default App;
