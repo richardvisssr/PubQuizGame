@@ -11,7 +11,7 @@ import QuestionAnswer from "./components/team/QuestionAnswer";
 function App() {
   return (
     <div className="App">
-      <NewRound />
+      <Approve />
     </div>
   );
 }
