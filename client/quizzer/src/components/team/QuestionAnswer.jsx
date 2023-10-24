@@ -5,7 +5,6 @@ const colors = ["green", "purple", "blue", "yellow"];
 const QuestionAnswer = () => {
   const [selectedColor, setSelectedColor] = useState(null);
   const [answer, setAnswer] = useState(null);
-  const question = "This is the question text.";
 
   const handleColorSelection = (color) => {
     setSelectedColor(color);
