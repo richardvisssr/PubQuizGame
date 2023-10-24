@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import './App.css'
+import Quiz from './components/quiz/Quiz'
 
 function App() {
 
 
   return (
     <div className="App">
-      <Component/>
+      <Quiz />
     </div>
     )
 }

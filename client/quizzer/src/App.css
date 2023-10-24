@@ -40,3 +40,62 @@
 .read-the-docs {
   color: #888;
 }
+
+/* Header.css */
+.header-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.question {
+  font-size: 48px;
+  font-family: Inter;
+  font-weight: 400;
+  color: black;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.timer {
+  font-size: 24px;
+  font-family: Inter;
+  font-weight: 400;
+  color: black;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+/* Answer.css */
+.answer-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 175px;
+}
+
+.answer-text {
+  font-size: 24px;
+  font-family: Inter;
+  font-weight: 400;
+  color: black;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+/* CountdownTimer.css */
+.timer-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 35px;
+}
+
+.timer-text {
+  font-size: 16px;
+  font-family: Inter;
+  font-weight: 400;
+  color: black;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
