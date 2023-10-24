@@ -12,6 +12,10 @@ const GamePinInput = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     // Your game pin submission logic here
+
+    if(gamePin === "123"){
+      console.log("success");
+    }
   };
 
   return (

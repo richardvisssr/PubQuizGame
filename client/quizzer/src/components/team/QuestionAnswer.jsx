@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import SubmitButton from "../SubmitButton";
 
 const colors = ["green", "purple", "blue", "yellow"];
 
@@ -21,9 +22,7 @@ const QuestionAnswer = () => {
         <h1 className="mt-2 mb-2">{selectedColor}</h1>
         <h2 className="mb-4">Choose your answer:</h2>
       </div>
-      <button className="m-4" onClick={handleSubmit}>
-        Submit
-      </button>
+      <SubmitButton label={"Submit"} onClick={handleSubmit}/>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {colors.map((color) => (
           <div
