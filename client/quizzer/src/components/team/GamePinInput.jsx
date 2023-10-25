@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { useDispatch, useSelector } from 'react-redux';
+import { useState } from 'react';
+import { fetchGamePin } from '../../reducers/GamePinReducer';
 import Form from "../Form";
 
 const GamePinInput = () => {
   const [gamePin, setGamePin] = useState("");
   const [error, setError] = useState("");
+
+  const dispatch = useDispatch();
+  const gamePinFromRedux = useSelector(state => state.gamePin.gamePin);
 
   const handleInputChange = (event) => {
     setGamePin(event.target.value);
@@ -11,10 +16,18 @@ const GamePinInput = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Your game pin submission logic here
+    
+    // Dispatch an action to fetch the game pin
+    dispatch(fetchGamePin());
 
-    if(gamePin === "123"){
-      console.log("success");
+    // In your reducer, when the request is completed, update the state with the fetched game pin
+
+    // Check if the game pin matches what was entered
+    if (gamePinFromRedux === gamePin) {
+      console.log('Success');
+      // Navigate to the next step or perform further actions
+    } else {
+      setError('Incorrect game pin');
     }
   };
 
