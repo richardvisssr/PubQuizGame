@@ -1,35 +1,44 @@
-import { useDispatch, useSelector } from "react-redux";
-import { useState } from "react";
-import { fetchGamePin } from "../../reducers/quizReducer";
+import { useState, useEffect } from "react";
 import Form from "../Form";
 import { useNavigate } from "react-router-dom";
 
 const GamePinInput = () => {
   const [gamePin, setGamePin] = useState("");
   const [error, setError] = useState("");
-  const [teamName, setTeamName] = useState("");
+  const [ws, setWs] = useState(null);
 
   const navigate = useNavigate();
 
-  const dispatch = useDispatch();
-  const gamePinFromRedux = useSelector((state) => state.quiz.gamePin);
-
   const handleInputChange = (event) => {
-      setGamePin(event.target.value);
+    setGamePin(event.target.value);
   };
+
+  useEffect(() => {
+    const socket = new WebSocket("ws://localhost:3000"); // Vervang 'server-url' door de juiste URL van je WebSocket-server
+
+    socket.onopen = () => {
+      setWs(socket); // Sla de WebSocket-verbinding op in de state
+    };
+
+    socket.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      if (message.type === "gamePinResult") {
+        if (message.isValid) {
+          // De game-pin is geldig; je kunt naar '/team-name-input' navigeren
+          navigate("/team-name-input");
+        } else {
+          setError("Incorrect game pin");
+        }
+      }
+    };
+    
+  }, []);
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
-    // Dispatch an action to fetch the game pin
-    dispatch(fetchGamePin());
-
-    // In your reducer, when the request is completed, update the state with the fetched game pin
-
     // Check if the game pin matches what was entered
-    if (gamePinFromRedux === gamePin) {
-        navigate("/team-name-input");
-      // Navigate to the next step or perform further actions
+    if (ws) {
+      ws.send(JSON.stringify({ type: "checkGamePin", gamePin })); // Stuur een bericht naar de server om de game-pin te controleren
     } else {
       setError("Incorrect game pin");
     }
@@ -44,9 +53,7 @@ const GamePinInput = () => {
       onSubmit={handleSubmit}
       error={error}
     />
-    );
-
+  );
 };
-
 
 export default GamePinInput;

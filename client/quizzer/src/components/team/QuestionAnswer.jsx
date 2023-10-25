@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import SubmitButton from "../SubmitButton";
@@ -9,12 +9,33 @@ const colors = ["green", "purple", "blue", "yellow"];
 const QuestionAnswer = () => {
   const [selectedColor, setSelectedColor] = useState(null);
   const [answer, setAnswer] = useState(null);
-
   const teamId = useSelector((state) => state.team.teams.id);
-
   const navigate = useNavigate();
-
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    // Establish a WebSocket connection when the component mounts
+    const ws = new WebSocket("ws://localhost:3000"); // Replace with your WebSocket server URL
+
+    ws.onopen = () => {
+      console.log("WebSocket connection opened.");
+    };
+
+    // Handle messages received from the server
+    ws.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      if (message.type === "answerSubmitted") {
+        console.log("Answer submitted:", message.data);
+        // Handle the server's acknowledgment of the answer submission
+        // You might want to update the UI or trigger further actions here
+      }
+    };
+
+    // Close the WebSocket connection when the component unmounts
+    return () => {
+      ws.close();
+    };
+  }, []);
 
   const handleColorSelection = (color) => {
     setSelectedColor(color);
@@ -22,8 +43,21 @@ const QuestionAnswer = () => {
 
   const handleSubmit = () => {
     setAnswer(selectedColor);
+    // Dispatch the submitAnswer action here to update the Redux state
     dispatch(submitAnswer(teamId, answer));
-    navigate("/waitingScreen");
+
+    // Send a WebSocket message to notify the server that an answer has been submitted
+    const ws = new WebSocket("ws://localhost:3000"); // Replace with your WebSocket server URL
+    ws.onopen = () => {
+      const message = {
+        type: "submitAnswer",
+        data: { teamId, answer },
+      };
+      ws.send(JSON.stringify(message));
+    };
+
+    // Navigate to the waiting screen
+    navigate("/waitingScreenQuestion");
   };
 
   return (

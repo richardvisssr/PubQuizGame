@@ -15,6 +15,7 @@ const Router = () => {
       <Route path="/team-name-input" element={<TeamNameInput />} />
       <Route path="/waitingScreen" element={<WaitingScreen waiting={"game"} />}/>
       <Route path="/questionScreen" element={<QuestionAnswer />}/>
+      <Route path="/waitingScreenQuestion" element={<WaitingScreen waiting={"questions"} />}/>
     </Routes>
   );
 };

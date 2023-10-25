@@ -23,6 +23,10 @@ const handleSelectQuestion = (event) => {
 const handleStartGame = () => {
     // submit all information and start the game
   };
+    
+const handleEndGame = () => {
+  // submit all information and start the game
+};
 
 const NewRound = () => {
   return (
@@ -31,7 +35,8 @@ const NewRound = () => {
         questions={questions}
         onSelectQuestion={handleSelectQuestion}
       />
-      <SubmitButton label="Start Game" onClick={handleStartGame} />
+      <SubmitButton label="Start Game" onClick={handleStartGame} OR />
+      <SubmitButton label="End Game" onClick={handleEndGame} />
     </div>
   );
 };
