@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SubmitButton from "../SubmitButton";
 
 const colors = ["green", "purple", "blue", "yellow"];
@@ -6,14 +6,44 @@ const colors = ["green", "purple", "blue", "yellow"];
 const QuestionAnswer = () => {
   const [selectedColor, setSelectedColor] = useState(null);
   const [answer, setAnswer] = useState(null);
+  const [websocket, setWebsocket] = useState(null);
 
   const handleColorSelection = (color) => {
     setSelectedColor(color);
   };
 
   const handleSubmit = () => {
-    setAnswer(selectedColor);
+    if (websocket){
+      websocket.send(JSON.stringify({ type: "answer", message: selectedColor }))
+      setAnswer(selectedColor);
+    }
   };
+
+  const initWebSocket = () => {
+    if (!websocket) {
+      const ws = new WebSocket("ws://localhost:3000"); // Update with your server URL
+
+      ws.onopen = () => {
+        console.log("WebSocket connection is open!");
+      };
+
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        console.log("Received:", data.type);
+      };
+
+      ws.onclose = (event) => {
+        console.log(`WebSocket connection is closed! Code: ${event.code}, Clean: ${event.wasClean}`);
+      };
+
+      setWebsocket(ws);
+    }
+  };
+
+  // Initialize the WebSocket when the component mounts
+  useEffect(() => {
+    initWebSocket();
+  }, []);
 
   return (
     <div className="lg:w-3/4 lg:mx-auto">

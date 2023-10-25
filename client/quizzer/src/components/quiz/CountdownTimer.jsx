@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function CountdownTimer() {
   const navigate = useNavigate();
-  const totalSeconds = 15;
+  const totalSeconds = 60;
   const [remainingTime, setRemainingTime] = useState(totalSeconds);
 
   useEffect(() => {

@@ -11,12 +11,14 @@ app.use(express.static('public'));
 
 let nextClientId = 1; // Initialize a client identifier counter
 
-wss.broadcast = (data) => {
-  wss.clients.forEach((client) => {
-    // Include the identifier in the JSON message
-    client.sendJSON({ id: client.clientId, message: data.message });
+wss.broadcast = function (data, sender) {
+  wss.clients.forEach(function (client) {
+    if (client !== sender) {
+      client.send(JSON.stringify(data)); // Send the data as a JSON string
+    }
   });
 };
+
 
 wss.on('connection', (ws) => {
   ws.clientId = nextClientId; // Assign a unique identifier to the client
@@ -30,14 +32,15 @@ wss.on('connection', (ws) => {
 
   ws.on('message', (data) => {
     const message = JSON.parse(data);
-    if (data !== null) {
-      switch(message.type){
+    if (message !== null) { // Check the message, not the data
+      switch (message.type) {
         case 'pincode':
           console.log(`Received pincode from Client ${ws.clientId} => ${message.message}`);
-          ws.sendJSON({ message: `${message.message}`});
+          ws.sendJSON({ message: `${message.message}` });
           break;
-        case 'name':
-          ws.name = message.name;
+        case 'answer':
+          const newMessage = { type: 'answer-ack', message: `${message.message}` };
+          wss.broadcast(newMessage, ws);
           break;
         default:
           break;
@@ -51,6 +54,7 @@ wss.on('connection', (ws) => {
     console.log(`Client ${ws.clientId} disconnected`);
   });
 });
+
 
 http.on('request', app);
 http.listen(port, () => {

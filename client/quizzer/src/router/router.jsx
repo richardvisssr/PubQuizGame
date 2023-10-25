@@ -5,6 +5,7 @@ import QuizLogin from "../components/Quizmaster/QuizLogin";
 import GamePinInput from "../components/Team/GamePinInput";
 import Quiz from "../components/quiz/Quiz";
 import Leaderboard from "../components/quiz/Leaderboard";
+import QuestionAnswer from "../components/team/QuestionAnswer";
 
 const Router = () => {
   const teams = [
@@ -18,6 +19,7 @@ const Router = () => {
     <Routes>
       <Route path="/quizmaster" element={<QuizLogin />} />
       <Route path="/team" element={<GamePinInput />} />
+      <Route path="/team/:id" element={<QuestionAnswer />} />
       <Route path="/quiz/:id" element={<Quiz />} />
       <Route path="/leaderboard/:id" element={<Leaderboard teams={teams}/>} />
     </Routes>
