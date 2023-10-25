@@ -1,8 +1,8 @@
 // App.js
-import React from "react";
-import { BrowserRouter } from "react-router-dom"; // Import BrowserRouter here
-import Router from "./router/router";
-import "./App.css";
+import React, { useEffect } from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import Router from './router/router';
+import './App.css';
 
 function App() {
   return (
