@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function CountdownTimer() {
-  const totalSeconds = 30;
+  const navigate = useNavigate();
+  const totalSeconds = 15;
   const [remainingTime, setRemainingTime] = useState(totalSeconds);
 
   useEffect(() => {
@@ -11,6 +13,8 @@ export default function CountdownTimer() {
 
     if (remainingTime === 0) {
       clearInterval(timer);
+
+      navigate("/leaderboard/1");
     }
 
     return () => {
@@ -27,7 +31,8 @@ export default function CountdownTimer() {
         <div
           className="absolute h-full bg-green-700"
           style={{ width: `${progressBarWidth}%`, right: "0" }}
-        ></div>
+        >
+        </div>
       </div>
     </div>
   );
