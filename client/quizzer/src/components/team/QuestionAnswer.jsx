@@ -1,5 +1,8 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import SubmitButton from "../SubmitButton";
+import { submitAnswer } from "../../reducers/answerReducer";
 
 const colors = ["green", "purple", "blue", "yellow"];
 
@@ -7,12 +10,20 @@ const QuestionAnswer = () => {
   const [selectedColor, setSelectedColor] = useState(null);
   const [answer, setAnswer] = useState(null);
 
+  const teamId = useSelector((state) => state.team.teams.id);
+
+  const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
   const handleColorSelection = (color) => {
     setSelectedColor(color);
   };
 
   const handleSubmit = () => {
     setAnswer(selectedColor);
+    dispatch(submitAnswer(teamId, answer));
+    navigate("/waitingScreen");
   };
 
   return (

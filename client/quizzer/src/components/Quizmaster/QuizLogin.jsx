@@ -11,25 +11,6 @@ function QuizLogin() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    // try {
-    //   const response = await fetch("/api/login", {
-    //     method: "POST",
-    //     body: JSON.stringify({ code }),
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //   });
-    //   const data = await response.json();
-    //   if (data.success) {
-    //     // Redirect to next screen
-    //     // window.location.href = '/quizmaster/dashboard';
-    //   } else {
-    //     setError("Invalid code");
-    //   }
-    // } catch (error) {
-    //   console.error(error);
-    //   setError("An error occurred");
-    // }
     if (code === "123"){
       console.log("success");
     }
