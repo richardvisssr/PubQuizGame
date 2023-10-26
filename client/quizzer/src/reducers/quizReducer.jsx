@@ -9,7 +9,7 @@ export const fetchGamePin = createAsyncThunk("quiz/fetchGamePin", async () => {
 const QuizSlice = createSlice({
   name: "quiz",
   initialState: {
-    gamePin: "",
+    gamePin: [],
     id: "",
     rounds: [],
     questions: [],
@@ -17,11 +17,11 @@ const QuizSlice = createSlice({
   reducers: {},
   extraReducers: {
     [fetchGamePin.fulfilled]: (state, action) => {
-      state.gamepin = action.payload;
+      state.gamepin.push(action.payload);
     },
   },
 });
 
-export const { addTeam, updateTeam, deleteTeam } = QuizSlice.actions;
+export const { } = QuizSlice.actions;
 
 export default QuizSlice.reducer;

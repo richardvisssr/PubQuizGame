@@ -3,10 +3,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useState } from 'react';
 import { fetchGamePin } from '../../reducers/quizReducer';
 import Form from "../Form";
+import { useNavigate } from "react-router-dom";
 
 const GamePinInput = () => {
   const [gamePin, setGamePin] = useState("");
   const [error, setError] = useState("");
+
+  const navigate = useNavigate();
 
   const dispatch = useDispatch();
   const gamePinFromRedux = useSelector(state => state.quiz.gamePin);
@@ -27,6 +30,7 @@ const GamePinInput = () => {
     if (gamePinFromRedux === gamePin) {
       console.log('Success');
       // Navigate to the next step or perform further actions
+      navigate('/team-name-input');
     } else {
       setError('Incorrect game pin');
     }
