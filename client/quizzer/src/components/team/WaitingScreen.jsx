@@ -2,23 +2,38 @@ import React from "react";
 import ReactLoading from "react-loading";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useState, useEffect } from "react";
+
 
 const WaitingScreen = ({ waiting }) => {
   const navigate = useNavigate();
   const score = useSelector((state) => state.quiz.score);
+  const [websocket, setWebsocket] = useState(null);
 
-  const socket = new WebSocket("ws://localhost:3000"); // Vervang 'server-url' door de URL van je WebSocket-server
+  const initWebSocket = () => {
+    if (!websocket) {
+      const ws = new WebSocket("ws://localhost:3000"); // Update with your server URL
 
-  useEffect(() => {
-    socket.onmessage = (event) => {
-      try {
-        const message = JSON.parse(event.data);
-        handleWebSocketMessage(message);
-      } catch (error) {
-        console.error("Error parsing WebSocket message:", error);
-      }
-    };
-  }, []);
+      ws.onopen = () => {
+        console.log("WebSocket connection is open!");
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const message = JSON.parse(event.data);
+          handleWebSocketMessage(message);
+        } catch (error) {
+          console.error("Error parsing WebSocket message:", error);
+        }
+      };
+
+      ws.onclose = () => {
+        console.log(`WebSocket connection is closed!`);
+      };
+
+      setWebsocket(ws);
+    }
+  };
 
   const handleWebSocketMessage = (message) => {
     if (message.type === "gameStart") {
@@ -28,6 +43,11 @@ const WaitingScreen = ({ waiting }) => {
     }
     // Add more cases for other message types you expect
   };
+
+  // Initialize the WebSocket when the component mounts
+  useEffect(() => {
+    initWebSocket();
+  }, []);
 
   const renderContent = () => {
     switch (waiting) {

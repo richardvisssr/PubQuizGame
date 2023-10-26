@@ -7,23 +7,30 @@ import Form from "../Form";
 const TeamNameInput = () => {
   const [teamName, setTeamName] = useState("");
   const [error, setError] = useState("");
+  const [websocket, setWebsocket] = useState(null);
   const id = Math.floor(Math.random() * 1000000).toString();
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const initWebSocket = () => {
+    if (!websocket) {
+      const ws = new WebSocket("ws://localhost:3000"); // Update with your server URL
+
+      ws.onopen = () => {
+        console.log("WebSocket connection is open!");
+      };
+
+      ws.onclose = () => {
+        console.log(`WebSocket connection is closed!`);
+      };
+
+      setWebsocket(ws);
+    }
+  };
+
   useEffect(() => {
-    // Establish a WebSocket connection when the component mounts
-    const ws = new WebSocket("ws://localhost:3000"); // Replace with your WebSocket server URL
-
-    ws.onopen = () => {
-      console.log("WebSocket connection opened.");
-    };
-
-    // Close the WebSocket connection when the component unmounts
-    return () => {
-      ws.close();
-    };
+    initWebSocket();
   }, []);
 
   const handleInputChange = (event) => {
@@ -35,13 +42,13 @@ const TeamNameInput = () => {
     // Dispatch the addTeam action to update the Redux state
     dispatch(addTeam({ id, name: teamName, score: 0 }));
 
-    if (ws) {
+    if (websocket) {
       // Use the existing WebSocket connection to send the message
       const message = {
         type: "newTeamRegistered",
         data: { id, name: teamName, score: 0 },
       };
-      ws.send(JSON.stringify(message));
+      websocket.send(JSON.stringify(message));
     }
 
     // Navigate to the waiting screen

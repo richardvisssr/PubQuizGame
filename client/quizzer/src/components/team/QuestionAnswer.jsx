@@ -10,31 +10,38 @@ const QuestionAnswer = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [error, setError] = useState(""); // Define an error state
+  const [websocket, setWebsocket] = useState(null);
 
-  let ws; // Define the ws variable at a higher scope
+  const initWebSocket = () => {
+    if (!websocket) {
+      const ws = new WebSocket("ws://localhost:3000"); // Update with your server URL
+
+      ws.onopen = () => {
+        console.log("WebSocket connection is open!");
+      };
+
+      // Handle messages received from the server
+      ws.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+        if (message.type === "answerSubmitted") {
+          console.log("Answer submitted:", message.data);
+          // Handle the server's acknowledgment of the answer submission
+          // You might want to update the UI or trigger further actions here
+        }
+      };
+
+      ws.onclose = () => {
+        console.log(
+          `WebSocket connection is closed! Code`
+        );
+      };
+
+      setWebsocket(ws);
+    }
+  };
 
   useEffect(() => {
-    // Establish a WebSocket connection when the component mounts
-    ws = new WebSocket("ws://localhost:3000"); // Replace with your WebSocket server URL
-
-    ws.onopen = () => {
-      console.log("WebSocket connection opened.");
-    };
-
-    // Handle messages received from the server
-    ws.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      if (message.type === "answerSubmitted") {
-        console.log("Answer submitted:", message.data);
-        // Handle the server's acknowledgment of the answer submission
-        // You might want to update the UI or trigger further actions here
-      }
-    };
-
-    // Close the WebSocket connection when the component unmounts
-    return () => {
-      ws.close();
-    };
+    initWebSocket();
   }, []);
 
   const handleInputChange = (event) => {
@@ -49,17 +56,17 @@ const QuestionAnswer = () => {
       return;
     }
     console.log("Submitting answer:", answer);
-    
+
     // Dispatch the submitAnswer action here to update the Redux state
     dispatch(submitAnswer({ teamId, answer })); // Pass an object with teamId and answer
 
     // Send a WebSocket message to notify the server that an answer has been submitted
-    if (ws) {
+    if (websocket) {
       const message = {
         type: "submitAnswer",
         data: { teamId, answer },
       };
-      ws.send(JSON.stringify(message));
+      websocket.send(JSON.stringify(message));
     }
 
     // Navigate to the waiting screen
