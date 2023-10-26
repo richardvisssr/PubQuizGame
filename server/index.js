@@ -1,6 +1,8 @@
 const express = require('express');
 const { createServer } = require('http');
 const { Server: WebSocketServer } = require('ws');
+const bodyParser = require('body-parser');
+const quizMasterActions = require("./routes/quizMasterActions");
 
 const http = createServer();
 const wss = new WebSocketServer({ server: http });
@@ -8,6 +10,8 @@ const app = express();
 const port = 3000;
 
 app.use(express.static('public'));
+app.use(bodyParser.json());
+app.use("/", quizMasterActions);
 
 let nextClientId = 1; // Initialize a client identifier counter
 
@@ -36,7 +40,8 @@ wss.on('connection', (ws) => {
       switch (message.type) {
         case 'pincode':
           console.log(`Received pincode from Client ${ws.clientId} => ${message.message}`);
-          ws.sendJSON({ message: `${message.message}` });
+          const message = { type: "validCode", message: `${message.message}` };
+          wss.broadcast(message, ws);
           break;
         case 'answer':
           const newMessage = { type: 'answer-ack', message: `${message.message}` };
