@@ -1,6 +1,7 @@
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useState } from 'react';
-import { fetchGamePin } from '../../reducers/GamePinReducer';
+import { fetchGamePin } from '../../reducers/quizReducer';
 import Form from "../Form";
 
 const GamePinInput = () => {
@@ -8,7 +9,7 @@ const GamePinInput = () => {
   const [error, setError] = useState("");
 
   const dispatch = useDispatch();
-  const gamePinFromRedux = useSelector(state => state.gamePin.gamePin);
+  const gamePinFromRedux = useSelector(state => state.quiz.gamePin);
 
   const handleInputChange = (event) => {
     setGamePin(event.target.value);
