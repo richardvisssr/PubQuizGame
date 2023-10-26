@@ -1,23 +1,32 @@
 import React from "react";
 import ReactLoading from "react-loading";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const WaitingScreen = ({ waiting }) => {
   const navigate = useNavigate();
-  const questions = "5";
+  const score = useSelector((state) => state.quiz.score);
 
   const socket = new WebSocket("ws://localhost:3000"); // Vervang 'server-url' door de URL van je WebSocket-server
 
-  socket.onmessage = (event) => {
-    if (event.data === "gameStart") {
-      // Hier kun je de navigatie activeren
-      // Bijvoorbeeld, gebruik React Router om naar het volgende scherm te navigeren
+  useEffect(() => {
+    socket.onmessage = (event) => {
+      try {
+        const message = JSON.parse(event.data);
+        handleWebSocketMessage(message);
+      } catch (error) {
+        console.error("Error parsing WebSocket message:", error);
+      }
+    };
+  }, []);
+
+  const handleWebSocketMessage = (message) => {
+    if (message.type === "gameStart") {
       navigate("/questionScreen");
-    } else if (event.data === "newQuestion") {
-      // Hier kun je de navigatie activeren
-      // Bijvoorbeeld, gebruik React Router om naar het volgende scherm te navigeren
+    } else if (message.type === "newQuestion") {
       navigate("/questionScreen");
     }
+    // Add more cases for other message types you expect
   };
 
   const renderContent = () => {
@@ -27,7 +36,7 @@ const WaitingScreen = ({ waiting }) => {
           <div className="text-center">
             <div className="flex flex-col items-center justify-center">
               <h1 className="text-2xl font-bold mb-10">
-                {questions} questions good
+                {score} questions good
               </h1>
               <ReactLoading
                 type="spin"

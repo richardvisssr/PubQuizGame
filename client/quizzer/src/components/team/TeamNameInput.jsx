@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { addTeam } from "../../reducers/quizReducer";
+import { addTeam } from "../../reducers/teamReducer";
 import Form from "../Form";
 
 const TeamNameInput = () => {

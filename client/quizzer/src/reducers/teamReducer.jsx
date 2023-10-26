@@ -3,12 +3,16 @@ import { createSlice } from "@reduxjs/toolkit";
 const teamSlice = createSlice({
   name: "team",
   initialState: {
-    teams: [], // Een array om de teamgegevens bij te houden
+    id: "",
+    name: "",
+    score: 0,
   },
   reducers: {
     addTeam: (state, action) => {
-      // Actie om een nieuw team toe te voegen
-      state.teams.push(action.payload);
+      // Actie om team toe te voegen
+      state.id=action.payload.id;
+      state.name=action.payload.name;
+      state.score=action.payload.score; 
     },
     updateTeamScore: (state, action) => {
       // Actie om team scores bij te werken

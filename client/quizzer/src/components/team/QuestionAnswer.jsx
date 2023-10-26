@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import SubmitButton from "../SubmitButton";
 import { submitAnswer } from "../../reducers/answerReducer";
-
-const colors = ["green", "purple", "blue", "yellow"];
+import Form from "../Form";
 
 const QuestionAnswer = () => {
-  const [selectedColor, setSelectedColor] = useState(null);
-  const [answer, setAnswer] = useState(null);
-  const teamId = useSelector((state) => state.team.teams.id);
+  const [answer, setAnswer] = useState(""); // Use an empty string as the initial state for the answer
+  const teamId = useSelector((state) => state.team.id);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [error, setError] = useState(""); // Define an error state
+
+  let ws; // Define the ws variable at a higher scope
 
   useEffect(() => {
     // Establish a WebSocket connection when the component mounts
-    const ws = new WebSocket("ws://localhost:3000"); // Replace with your WebSocket server URL
+    ws = new WebSocket("ws://localhost:3000"); // Replace with your WebSocket server URL
 
     ws.onopen = () => {
       console.log("WebSocket connection opened.");
@@ -37,47 +37,45 @@ const QuestionAnswer = () => {
     };
   }, []);
 
-  const handleColorSelection = (color) => {
-    setSelectedColor(color);
+  const handleInputChange = (event) => {
+    setAnswer(event.target.value); // Update the answer state with the input value
   };
 
-  const handleSubmit = () => {
-    setAnswer(selectedColor);
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    if (answer.trim() === "") {
+      setError("Answer cannot be empty"); // Set an error message if the answer is empty
+      return;
+    }
+    console.log("Submitting answer:", answer);
+    
     // Dispatch the submitAnswer action here to update the Redux state
-    dispatch(submitAnswer(teamId, answer));
+    dispatch(submitAnswer({ teamId, answer })); // Pass an object with teamId and answer
 
     // Send a WebSocket message to notify the server that an answer has been submitted
-    const ws = new WebSocket("ws://localhost:3000"); // Replace with your WebSocket server URL
-    ws.onopen = () => {
+    if (ws) {
       const message = {
         type: "submitAnswer",
         data: { teamId, answer },
       };
       ws.send(JSON.stringify(message));
-    };
+    }
 
     // Navigate to the waiting screen
     navigate("/waitingScreenQuestion");
   };
 
   return (
-    <div className="lg:w-3/4 lg:mx-auto">
-      <div className="text-center">
-        <h2 className="mt-4">Answer:</h2>
-        <h1 className="mt-2 mb-2">{selectedColor}</h1>
-        <h2 className="mb-4">Choose your answer:</h2>
-      </div>
-      <SubmitButton label={"Submit"} onClick={handleSubmit}/>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {colors.map((color) => (
-          <div
-            key={color}
-            className={`bg-${color}-500 h-24 lg:h-32 w-full md:w-1/2 lg:w-1/4 rounded-lg p-4 cursor-pointer`}
-            onClick={() => handleColorSelection(color)}
-          ></div>
-        ))}
-      </div>
-    </div>
+    <Form
+      title="Please enter your answer here:"
+      buttonLabel="Submit"
+      value={answer}
+      onChange={handleInputChange}
+      onSubmit={handleSubmit}
+      error={error}
+      required
+    />
   );
 };
 
