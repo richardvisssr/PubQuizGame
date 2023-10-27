@@ -1,14 +1,19 @@
 import React from "react";
 import ReactLoading from "react-loading";
-import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
-
+import { fetchScore } from "../../reducers/teamReducer";
 
 const WaitingScreen = ({ waiting }) => {
   const navigate = useNavigate();
-  const score = useSelector((state) => state.quiz.score);
+  const score = useSelector((state) => state.team.score);
+  const teamId = useSelector((state) => state.team.id);
   const [websocket, setWebsocket] = useState(null);
+  const roundNumber = useSelector((state) => state.quiz.roundNumber);
+  const { code } = useParams();
+
+  const dispatch = useDispatch();
 
   const initWebSocket = () => {
     if (!websocket) {
@@ -19,11 +24,11 @@ const WaitingScreen = ({ waiting }) => {
       };
 
       ws.onmessage = (event) => {
-        try {
-          const message = JSON.parse(event.data);
-          handleWebSocketMessage(message);
-        } catch (error) {
-          console.error("Error parsing WebSocket message:", error);
+        const message = JSON.parse(event.data);
+        dispatch(fetchRound());
+
+        if (message.type === "gameStart") {
+          navigate(`/questionScreen/${code}/${roundNumber}`);
         }
       };
 
@@ -35,18 +40,22 @@ const WaitingScreen = ({ waiting }) => {
     }
   };
 
-  const handleWebSocketMessage = (message) => {
-    if (message.type === "gameStart") {
-      navigate("/questionScreen");
-    } else if (message.type === "newQuestion") {
-      navigate("/questionScreen");
-    }
-    // Add more cases for other message types you expect
-  };
-
   // Initialize the WebSocket when the component mounts
   useEffect(() => {
+    // dispatch(fetchScore(teamId));
     initWebSocket();
+
+     // Add a timer for questions if waiting for questions
+     if (waiting === "questions") {
+      // Set a timer for 10 seconds
+      const timer = setTimeout(() => {
+        // Navigate to the next screen after the timer expires
+        navigate(`/questionScreen/${code}/${roundNumber}`);
+      }, 10000); // 10,000 milliseconds = 10 seconds
+
+      // Clean up the timer when the component unmounts
+      return () => clearTimeout(timer);
+    }
   }, []);
 
   const renderContent = () => {

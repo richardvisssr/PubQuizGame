@@ -12,7 +12,7 @@ const GamePinInput = () => {
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
-  const gamePinFromRedux = useSelector(state => state.quiz.gamePin);
+  const gamePinFromRedux = useSelector(state => state.quiz.gamePins);
 
   const handleInputChange = (event) => {
     setGamePin(event.target.value);
@@ -20,19 +20,15 @@ const GamePinInput = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    
-    // Dispatch an action to fetch the game pin
+
     dispatch(fetchGamePin());
 
-    // In your reducer, when the request is completed, update the state with the fetched game pin
-
-    // Check if the game pin matches what was entered
-    if (gamePinFromRedux === gamePin) {
-      console.log('Success');
+    if (gamePinFromRedux.includes(gamePin)) {
+      console.log("Success");
       // Navigate to the next step or perform further actions
-      navigate('/team-name-input');
+      navigate(`/team-name-input/${gamePinFromRedux}`);
     } else {
-      setError('Incorrect game pin');
+      setError("Incorrect game pin");
     }
   };
 

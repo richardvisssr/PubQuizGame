@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { addTeam } from "../../reducers/teamReducer";
 import Form from "../Form";
 
@@ -8,6 +8,7 @@ const TeamNameInput = () => {
   const [teamName, setTeamName] = useState("");
   const [error, setError] = useState("");
   const [websocket, setWebsocket] = useState(null);
+  const { code } = useParams();
   const id = Math.floor(Math.random() * 1000000).toString();
 
   const navigate = useNavigate();
@@ -52,7 +53,7 @@ const TeamNameInput = () => {
     }
 
     // Navigate to the waiting screen
-    navigate("/waitingScreen");
+    navigate(`/waitingScreen/${code}`);
   };
 
   return (

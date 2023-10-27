@@ -2,16 +2,19 @@ import React, { useState } from "react";
 import SubmitButton from "../SubmitButton";
 import { useDispatch, useSelector } from "react-redux";
 import { setQuestions } from "../../reducers/roundReducer";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const ChooseCategory = () => {
   const [selectedCategories, setSelectedCategories] = useState([]); // Geselecteerde categorieën als een array
+  const [error, setError] = useState("");
   const questions = useSelector((state) => state.quizmaster.questions);
   const categories = [
     ...new Set(questions.map((question) => question.category)),
   ];
-
-  const pinCode = Math.floor(Math.random() * 1000000).toString();
+  const { code } = useParams();
+  const { roundNumber } = useParams();
+  
+  console.log("roundNumber", roundNumber);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -26,25 +29,20 @@ const ChooseCategory = () => {
     setSelectedCategories(selected.slice(0, 3)); // Maximaal drie categorieën selecteren
   };
 
-  const handleSubmit = async  (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
 
-    try {
-      await fetch("/quizzes", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ code: pinCode }),
-      });
-    } catch (error) {
-      // Handle any errors that occur during the request
-      console.error("Error creating quiz:", error);
-    }
-
-    dispatch(setQuestions({ questions, categories: selectedCategories }));
-
-    navigate("/choose-questions");
+    // if (selectedCategories.length < 3) {
+    //   setError("Please select at least three categories.");
+    // } else {
+      dispatch(setQuestions({ questions, categories: selectedCategories }));
+      if (roundNumber === "1"){
+        console.log("roundNumber", roundNumber);
+      navigate(`/choose-questions/${code}/${roundNumber}`);
+      } else {
+        navigate(`/newRound/${code}/${roundNumber}`);
+      }
+    // }
   };
 
   return (

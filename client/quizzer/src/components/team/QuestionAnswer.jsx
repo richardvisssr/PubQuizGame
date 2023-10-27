@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { submitAnswer } from "../../reducers/answerReducer";
 import Form from "../Form";
 
 const QuestionAnswer = () => {
   const [answer, setAnswer] = useState(""); // Use an empty string as the initial state for the answer
   const teamId = useSelector((state) => state.team.id);
+  const teamName = useSelector((state) => state.team.name);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [error, setError] = useState(""); // Define an error state
   const [websocket, setWebsocket] = useState(null);
+  const { code } = useParams();
+  const { roundNumber } = useParams();
+
 
   const initWebSocket = () => {
     if (!websocket) {
@@ -34,9 +38,10 @@ const QuestionAnswer = () => {
             // Wanneer de timer klaar is, stuur een antwoord naar de server
             const submitMessage = {
               type: "submitAnswer",
-              data: { teamId, answer },
+              data: { teamId, teamName , answer },
             };
             websocket.send(JSON.stringify(submitMessage));
+            navigate(`/waitingScreenQuestion/${code}/${roundNumber}`);
             break;
 
           // Voeg hier extra gevallen toe om andere soorten berichten te verwerken
@@ -74,10 +79,7 @@ const QuestionAnswer = () => {
     setAnswer(answer);
 
     // Dispatch the submitAnswer action here to update the Redux state
-    dispatch(submitAnswer({ teamId, answer })); // Pass an object with teamId and answer
-
-    // Navigate to the waiting screen
-    navigate("/waitingScreenQuestion");
+    dispatch(submitAnswer({ teamId, teamName ,answer })); // Pass an object with teamId and answer
   };
 
   return (

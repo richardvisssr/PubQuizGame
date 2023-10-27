@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import SubmitButton from "../SubmitButton";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { setSelectedQuestionsReducer } from "../../reducers/roundReducer";
+import { useNavigate, useParams } from "react-router-dom";
+
 
 // TeamList component
 const TeamList = ({ teams, onRemoveTeam }) => (
@@ -52,8 +55,15 @@ const Approve = () => {
   const [selectedQuestions, setSelectedQuestions] = useState([]);
   const [teams, setTeams] = useState([]); // Initialize teams as an empty array
   const [websocket, setWebsocket] = useState(null);
+  const { code } = useParams();
+  const { roundNumber } = useParams();
 
-  const questions = useSelector((state) => state.round.filterdQuestions);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const questions = useSelector(
+    (state) => state.round.filterdQuestionsFromCategory
+  );
 
   const initWebSocket = () => {
     if (!websocket) {
@@ -87,8 +97,15 @@ const Approve = () => {
   }, []);
 
   const handleRemoveTeam = (id) => {
-    const updatedTeams = teams.filter((team) => team.id !== id);
-    setTeams(updatedTeams);
+    fetch(`/quizzes/${code}/${id}`, {
+      method: "DELETE",
+    });
+  };
+
+  const handleRemoveQuiz = () => {
+    fetch(`/quizzes/${code}`, {
+      method: "DELETE",
+    });
   };
 
   const handleSelectQuestion = (event) => {
@@ -97,25 +114,29 @@ const Approve = () => {
       (option) => option.value
     );
     const selectedQuestions = questions.filter((question) =>
-      selectedQuestionIds.includes(question.id.toString())
+      selectedQuestionIds.includes(question.question)
     );
     setSelectedQuestions(selectedQuestions);
   };
 
   const handleStartGame = () => {
-    if (websocket) { // Controleer of de WebSocket-verbinding is geïnitialiseerd
-      // Stel het type bericht in op "startGame" en eventuele andere relevante gegevens
+    if (websocket) {
       const message = {
         type: "startGame",
-        data: { /* eventuele gegevens die je wilt verzenden */ }
       };
-  
-      // Verstuur het bericht als een JSON-gecodeerde string
+
       websocket.send(JSON.stringify(message));
     }
-    // Hier kun je eventuele andere logica voor het starten van het spel toevoegen
+    fetch(`/quizzes/${code}/${roundNumber}`), {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ teams: teams, question: selectedQuestions }),
+    };
+    dispatch(setSelectedQuestionsReducer(selectedQuestions)); // Now it should pass the entire question objects
+    navigate(`/game/${code}/${roundNumber}`);
   };
-  
 
   return (
     <div>
@@ -132,7 +153,7 @@ const Approve = () => {
           onSelectQuestion={handleSelectQuestion}
         />
       )}
-      <SubmitButton label="Go back" onClick={() => console.log("Go back")} />
+      <SubmitButton label="Delete Quiz" onClick={handleRemoveQuiz} />
       <SubmitButton label="Start Game" onClick={handleStartGame} />
     </div>
   );
