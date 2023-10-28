@@ -135,7 +135,7 @@ const Approve = () => {
       body: JSON.stringify({ teams: teams, question: selectedQuestions }),
     };
     dispatch(setSelectedQuestionsReducer(selectedQuestions)); // Now it should pass the entire question objects
-    navigate(`/game/${code}/${roundNumber}`);
+    navigate(`/game/${code}/${roundNumber}/1`);
   };
 
   return (

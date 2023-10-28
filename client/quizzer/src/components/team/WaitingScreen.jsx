@@ -10,7 +10,7 @@ const WaitingScreen = ({ waiting }) => {
   const score = useSelector((state) => state.team.score);
   const teamId = useSelector((state) => state.team.id);
   const [websocket, setWebsocket] = useState(null);
-  const roundNumber = useSelector((state) => state.quiz.roundNumber);
+  const roundNumber = useSelector((state) => state.round.roundNumber);
   const { code } = useParams();
 
   const dispatch = useDispatch();

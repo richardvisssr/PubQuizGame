@@ -15,7 +15,7 @@ const roundSlice = createSlice({
   initialState: {
     filterdQuestionsFromCategory: [],
     selectedQuestions: [],
-    roundNumber: 1,
+    roundNumber: 2,
   },
   reducers: {
     setQuestions: (state, action) => {

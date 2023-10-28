@@ -1,14 +1,12 @@
 import React, { useState } from "react"; // Add the import statement for useEffect
 import Form from "../Form";
 import { useNavigate } from "react-router-dom";
-import { fetchQuestions } from "../../reducers/quizmasterReducer";
-import { useDispatch } from "react-redux";
+
 
 function QuizLogin() {
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
 
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleInputChange = (event) => {

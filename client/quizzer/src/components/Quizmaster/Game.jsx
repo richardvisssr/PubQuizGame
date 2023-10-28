@@ -23,6 +23,7 @@ function Game() {
     // Voeg meer dummy antwoorden toe zoals hierboven
   ]);
   const { code } = useParams();
+  const { questionNumber } = useParams();
   let { roundNumber } = useParams();
   const [websocket, setWebsocket] = useState(null);
 
@@ -68,8 +69,9 @@ function Game() {
             break;
 
           case "timerDone":
-            if (roundNumber <= 12) {
-              navigate(`/game/${code}/${roundNumber}`);
+            if (questionNumber <= 12) {
+                const nextQuestionNumber = questionNumber + 1;
+              navigate(`/game/${code}/${roundNumber}/${nextQuestionNumber}`);
             } else {
               const nextRoundNumber = roundNumber + 1;
               fetch(`/quizzes`, {

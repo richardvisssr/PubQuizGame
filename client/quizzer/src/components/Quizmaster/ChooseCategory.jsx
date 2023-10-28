@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import SubmitButton from "../SubmitButton";
 import { useDispatch, useSelector } from "react-redux";
 import { setQuestions } from "../../reducers/roundReducer";
 import { useNavigate, useParams } from "react-router-dom";
+import { fetchQuestions } from "../../reducers/quizmasterReducer";
 
 const ChooseCategory = () => {
   const [selectedCategories, setSelectedCategories] = useState([]); // Geselecteerde categorieën als een array
@@ -13,10 +14,13 @@ const ChooseCategory = () => {
   ];
   const { code } = useParams();
   const { roundNumber } = useParams();
-  
-  console.log("roundNumber", roundNumber);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchQuestions());
+  }, []);
 
   const handleCategoryChange = (event) => {
     const options = event.target.options;
@@ -35,14 +39,9 @@ const ChooseCategory = () => {
     // if (selectedCategories.length < 3) {
     //   setError("Please select at least three categories.");
     // } else {
-      dispatch(setQuestions({ questions, categories: selectedCategories }));
-      if (roundNumber === "1"){
-        console.log("roundNumber", roundNumber);
-      navigate(`/choose-questions/${code}/${roundNumber}`);
-      } else {
-        navigate(`/newRound/${code}/${roundNumber}`);
-      }
-    // }
+    dispatch(setQuestions({ questions, categories: selectedCategories }));
+
+    navigate(`/choose-questions/${code}/${roundNumber}`);
   };
 
   return (

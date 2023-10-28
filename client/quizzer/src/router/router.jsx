@@ -17,7 +17,8 @@ const Router = () => {
       <Route path="/quizmaster" element={<QuizLogin />} />
       <Route path="/setup/:code/:roundNumber" element={<ChooseCategory />} />
       <Route path="/choose-questions/:code/:roundNumber" element={<Approve />} />
-      <Route path="/game/:code/:roundNumber" element={<Game />} />
+      <Route path="/game/:code/:roundNumber/:questionNumber" element={<Game />} />
+      {/* <Route path="/newRound/:code/:roundNumber" element={<NewRound />} /> */}
       <Route path="/team" element={<GamePinInput />} />
       <Route path="/team-name-input/:code" element={<TeamNameInput />} />
       <Route path="/waitingScreen/:code" element={<WaitingScreen waiting={"game"} />}/>
