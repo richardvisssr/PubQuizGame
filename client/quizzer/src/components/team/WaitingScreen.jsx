@@ -29,6 +29,8 @@ const WaitingScreen = ({ waiting }) => {
 
         if (message.type === "gameStart") {
           navigate(`/questionScreen/${code}/${roundNumber}`);
+        } else if (message.type === "team-ack"){
+          console.log(message.message);
         }
       };
 

@@ -3,6 +3,7 @@ const { createServer } = require('http');
 const { Server: WebSocketServer } = require('ws');
 const bodyParser = require('body-parser');
 const quizMasterActions = require("./routes/quizMasterActions");
+const teamActions = require("./routes/teamActions");
 
 const http = createServer();
 const wss = new WebSocketServer({ server: http });
@@ -12,6 +13,7 @@ const port = 3000;
 app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use("/", quizMasterActions);
+app.use("/", teamActions);
 
 let nextClientId = 1; // Initialize a client identifier counter
 
@@ -35,17 +37,52 @@ wss.on('connection', (ws) => {
   ws.sendJSON({ message: 'Hello from server!', id: ws.clientId });
 
   ws.on('message', (data) => {
-    const message = JSON.parse(data);
-    if (message !== null) { // Check the message, not the data
-      switch (message.type) {
+    const receivedMessage = JSON.parse(data); // Renamed the variable
+  
+    if (receivedMessage !== null) {
+      switch (receivedMessage.type) {
         case 'pincode':
-          console.log(`Received pincode from Client ${ws.clientId} => ${message.message}`);
-          const message = { type: "validCode", message: `${message.message}` };
-          wss.broadcast(message, ws);
+          console.log(`Received pincode from Client ${ws.clientId} => ${receivedMessage.message}`);
+          const pinMessage = { type: "validCode", message: `${receivedMessage.message}` };
+          wss.broadcast(pinMessage, ws);
           break;
         case 'answer':
-          const newMessage = { type: 'answer-ack', message: `${message.message}` };
-          wss.broadcast(newMessage, ws);
+          const newAnswerMessage = { type: 'answer-ack', message: `${receivedMessage.message}` };
+          wss.broadcast(newAnswerMessage, ws);
+          break;
+        case 'newTeamRegistered':
+          const teamName = receivedMessage.data.name;
+          const teamId = receivedMessage.data.id;
+          const score = receivedMessage.data.score;
+  
+          const requestData = {
+            teamId: teamId,
+            name: teamName,
+            score: score
+          };
+  
+          fetch("http://localhost:3000/teams", {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestData)
+          })
+            .then(response => {
+              if (response.ok) {
+                const userAckMessage = { type: 'team-ack', message: `${requestData}` };
+                const quizMasterAckMessage = { type: 'newTeamRegistered', message: `${JSON.stringify(requestData)}` };
+
+                wss.broadcast(quizMasterAckMessage, ws);
+                ws.send(JSON.stringify(userAckMessage));
+
+              } else {
+                throw new Error(response.statusText);
+              }
+            })
+            .catch(error => {
+              console.log(error);
+            });
           break;
         default:
           break;
@@ -54,6 +91,7 @@ wss.on('connection', (ws) => {
       console.log(`Null message received from Client ${ws.clientId}`);
     }
   });
+  
 
   ws.on('close', () => {
     console.log(`Client ${ws.clientId} disconnected`);

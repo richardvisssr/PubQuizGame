@@ -48,7 +48,12 @@ router.delete("/quizzes/:id", async (req, res) => {
 });
 
 router.delete("/quizzes/:id/:team", async (req, res) => {
+    try {
+        const { id, teamId} = req.params;
 
+    } catch (error) {
+        
+    }
 });
 
 router.put("/quizzes/:id/:round", async (req, res) => {

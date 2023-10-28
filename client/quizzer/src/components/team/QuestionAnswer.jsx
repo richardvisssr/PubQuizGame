@@ -81,28 +81,7 @@ const QuestionAnswer = () => {
     // Dispatch the submitAnswer action here to update the Redux state
     dispatch(submitAnswer({ teamId, teamName ,answer })); // Pass an object with teamId and answer
   };
-
-  const initWebSocket = () => {
-    if (!websocket) {
-      const ws = new WebSocket("ws://localhost:3000"); // Update with your server URL
-
-      ws.onopen = () => {
-        console.log("WebSocket connection is open!");
-      };
-
-      ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        console.log("Received:", data.type);
-      };
-
-      ws.onclose = (event) => {
-        console.log(`WebSocket connection is closed! Code: ${event.code}, Clean: ${event.wasClean}`);
-      };
-
-      setWebsocket(ws);
-    }
-  };
-
+  
   // Initialize the WebSocket when the component mounts
   useEffect(() => {
     initWebSocket();

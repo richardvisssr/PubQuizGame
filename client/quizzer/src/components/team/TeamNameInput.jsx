@@ -22,6 +22,16 @@ const TeamNameInput = () => {
         console.log("WebSocket connection is open!");
       };
 
+          // Listen for messages from the server
+      ws.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+
+        if (message.type === "team-ack") {
+          dispatch(addTeam({ id, name: teamName, score: 0 }));
+          navigate(`/waitingScreen/${code}`);
+        }
+      };
+
       ws.onclose = () => {
         console.log(`WebSocket connection is closed!`);
       };
@@ -40,8 +50,6 @@ const TeamNameInput = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // Dispatch the addTeam action to update the Redux state
-    dispatch(addTeam({ id, name: teamName, score: 0 }));
 
     if (websocket) {
       // Use the existing WebSocket connection to send the message
@@ -51,9 +59,6 @@ const TeamNameInput = () => {
       };
       websocket.send(JSON.stringify(message));
     }
-
-    // Navigate to the waiting screen
-    navigate(`/waitingScreen/${code}`);
   };
 
   return (
