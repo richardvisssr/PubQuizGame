@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from "react"; // Add the import statement for useEffect
+import React, { useState } from "react"; // Add the import statement for useEffect
 import Form from "../Form";
+import { useNavigate } from "react-router-dom";
+
 
 function QuizLogin() {
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
-  const [websocket, setWebsocket] = useState(null);
+
+  const navigate = useNavigate();
 
   const handleInputChange = (event) => {
     setCode(event.target.value);
@@ -13,40 +16,33 @@ function QuizLogin() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    if (websocket) {
-      websocket.send(JSON.stringify({ type: "pincode", message: code }));
+    if (!code) {
+      setError("Please enter a code.");
+      return; // Prevent further execution
     }
-  };
 
-  const initWebSocket = () => {
-    if (!websocket) {
-      const ws = new WebSocket("ws://localhost:3000"); // Update with your server URL
-
-      ws.onopen = () => {
-        console.log("WebSocket connection is open!");
-      };
-
-      ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        console.log("Received:", data.message);
-      };
-
-      ws.onclose = (event) => {
-        console.log(`WebSocket connection is closed! Code: ${event.code}, Clean: ${event.wasClean}`);
-      };
-
-      setWebsocket(ws);
+    try {
+      await fetch("/quizzes", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ code, round: '1' }),
+      });
+    } catch (error) {
+      // Handle any errors that occur during the request
+      console.error("Error creating quiz:", error);
     }
-  };
 
-  // Initialize the WebSocket when the component mounts
-  useEffect(() => {
-    initWebSocket();
-  }, []);
+    dispatch(fetchQuestions());
+
+    navigate(`/setup/${code}/1`);
+
+  };
 
   return (
     <Form
-      title="Code:"
+      title="Enter a pincode for the quiz:"
       buttonLabel="Submit"
       value={code}
       onChange={handleInputChange}

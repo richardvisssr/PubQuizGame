@@ -1,8 +1,16 @@
 import { configureStore } from "@reduxjs/toolkit";
-import gamePinReducer from "./reducers/GamePinReducer";
+import quizReducer from "./reducers/quizReducer";
+import teamReducer from "./reducers/teamReducer";
+import answerReducer from "./reducers/answerReducer";
+import quizmasterReducer from "./reducers/quizmasterReducer";
+import roundReducer from "./reducers/roundReducer";
 
 export default configureStore({
   reducer: {
-    gamePin: gamePinReducer,
+    quiz: quizReducer,
+    team: teamReducer,
+    answer: answerReducer,
+    quizmaster: quizmasterReducer,
+    round: roundReducer,
   },
 });

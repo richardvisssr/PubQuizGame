@@ -1,22 +1,85 @@
 import React, { useState, useEffect } from "react";
-import SubmitButton from "../SubmitButton";
-
-const colors = ["green", "purple", "blue", "yellow"];
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
+import { submitAnswer } from "../../reducers/answerReducer";
+import Form from "../Form";
 
 const QuestionAnswer = () => {
-  const [selectedColor, setSelectedColor] = useState(null);
-  const [answer, setAnswer] = useState(null);
+  const [answer, setAnswer] = useState(""); // Use an empty string as the initial state for the answer
+  const teamId = useSelector((state) => state.team.id);
+  const teamName = useSelector((state) => state.team.name);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [error, setError] = useState(""); // Define an error state
   const [websocket, setWebsocket] = useState(null);
+  const { code } = useParams();
+  const { roundNumber } = useParams();
 
-  const handleColorSelection = (color) => {
-    setSelectedColor(color);
+
+  const initWebSocket = () => {
+    if (!websocket) {
+      const ws = new WebSocket("ws://localhost:3000"); // Update with your server URL
+
+      ws.onopen = () => {
+        console.log("WebSocket connection is open!");
+      };
+
+      // Handle messages received from the server
+      ws.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+        switch (message.type) {
+          case "answerSubmitted":
+            console.log("Answer submitted:", message.data);
+            // Hier kun je de serverbevestiging van de antwoordindiening afhandelen
+            // Je wilt mogelijk de UI bijwerken of verdere acties ondernemen.
+            break;
+
+          case "timerDone":
+            // Wanneer de timer klaar is, stuur een antwoord naar de server
+            const submitMessage = {
+              type: "submitAnswer",
+              data: { teamId, teamName , answer },
+            };
+            websocket.send(JSON.stringify(submitMessage));
+            navigate(`/waitingScreenQuestion/${code}/${roundNumber}`);
+            break;
+
+          // Voeg hier extra gevallen toe om andere soorten berichten te verwerken
+
+          default:
+            // Handel onbekende berichten af of voer andere relevante logica uit
+            break;
+        }
+      };
+
+      ws.onclose = () => {
+        console.log(`WebSocket connection is closed! Code`);
+      };
+
+      setWebsocket(ws);
+    }
   };
 
-  const handleSubmit = () => {
-    if (websocket){
-      websocket.send(JSON.stringify({ type: "answer", message: selectedColor }))
-      setAnswer(selectedColor);
+  useEffect(() => {
+    initWebSocket();
+  }, []);
+
+  const handleInputChange = (event) => {
+    setAnswer(event.target.value); // Update the answer state with the input value
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    if (answer.trim() === "") {
+      setError("Answer cannot be empty"); // Set an error message if the answer is empty
+      return;
     }
+
+    setAnswer(answer);
+
+    // Dispatch the submitAnswer action here to update the Redux state
+    dispatch(submitAnswer({ teamId, teamName ,answer })); // Pass an object with teamId and answer
   };
 
   const initWebSocket = () => {
@@ -46,23 +109,15 @@ const QuestionAnswer = () => {
   }, []);
 
   return (
-    <div className="lg:w-3/4 lg:mx-auto">
-      <div className="text-center">
-        <h2 className="mt-4">Answer:</h2>
-        <h1 className="mt-2 mb-2">{selectedColor}</h1>
-        <h2 className="mb-4">Choose your answer:</h2>
-      </div>
-      <SubmitButton label={"Submit"} onClick={handleSubmit}/>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {colors.map((color) => (
-          <div
-            key={color}
-            className={`bg-${color}-500 h-24 lg:h-32 w-full md:w-1/2 lg:w-1/4 rounded-lg p-4 cursor-pointer`}
-            onClick={() => handleColorSelection(color)}
-          ></div>
-        ))}
-      </div>
-    </div>
+    <Form
+      title="Please enter your answer here:"
+      buttonLabel="Submit"
+      value={answer}
+      onChange={handleInputChange}
+      onSubmit={handleSubmit}
+      error={error}
+      required
+    />
   );
 };
 
