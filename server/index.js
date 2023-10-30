@@ -46,8 +46,14 @@ wss.on('connection', (ws) => {
           const pinMessage = { type: "validCode", message: `${receivedMessage.message}` };
           wss.broadcast(pinMessage, ws);
           break;
-        case 'answer':
-          const newAnswerMessage = { type: 'answer-ack', message: `${receivedMessage.message}` };
+        case 'submitAnswer':
+          const newData = {
+            teamId: receivedMessage.data.teamId,
+            teamName: receivedMessage.data.teamName,
+            answer: receivedMessage.data.answer
+          }
+
+          const newAnswerMessage = { type: 'answer-ack', message: `${JSON.stringify(newData)}` };
           wss.broadcast(newAnswerMessage, ws);
           break;
         case 'newTeamRegistered':

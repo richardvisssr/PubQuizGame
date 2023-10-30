@@ -77,7 +77,7 @@ const Approve = () => {
         // Check the type of the message and process the updated teams
         if (data.type === "newTeam") {
           // Assuming the teams data is provided in the message
-          const teamData = data.message;
+          const teamData = JSON.parse(data.message);
           setTeams((prevTeams) => [...prevTeams, teamData]);
         }
       };
