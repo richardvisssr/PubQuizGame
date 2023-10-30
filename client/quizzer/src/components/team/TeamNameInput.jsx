@@ -53,9 +53,11 @@ const TeamNameInput = () => {
 
     if (websocket) {
       // Use the existing WebSocket connection to send the message
+      //Nu ook code meesturen om te checken of ze de quizmaster scherm mogen joinnen in Approve.jsx
+      //Of niet???
       const message = {
         type: "newTeamRegistered",
-        data: { id, name: teamName, score: 0 },
+        data: { id, name: teamName, score: 0, code },
       };
       websocket.send(JSON.stringify(message));
     }

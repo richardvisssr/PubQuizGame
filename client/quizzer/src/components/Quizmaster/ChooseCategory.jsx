@@ -12,7 +12,7 @@ const ChooseCategory = () => {
     ...new Set(questions.map((question) => question.category)),
   ];
   const { code } = useParams();
-  const { roundNumber } = useParams();
+  const  roundNumber = useSelector((state) => state.round.roundNumber);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -35,8 +35,12 @@ const ChooseCategory = () => {
     //   setError("Please select at least three categories.");
     // } else {
     dispatch(setQuestions({ questions, categories: selectedCategories }));
-
+    if(roundNumber === 1) {
     navigate(`/choose-questions/${code}/${roundNumber}`);
+    }
+    else {
+      navigate(`/newRound/${code}/${roundNumber}`);
+    }
   };
 
   return (

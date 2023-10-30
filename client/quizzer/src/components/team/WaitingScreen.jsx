@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import { fetchScore } from "../../reducers/teamReducer";
+import { fetchRound } from "../../reducers/roundReducer";
 
 const WaitingScreen = ({ waiting }) => {
   const navigate = useNavigate();

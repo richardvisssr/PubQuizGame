@@ -126,7 +126,7 @@ const Approve = () => {
   const handleStartGame = () => {
     if (websocket) {
       const message = {
-        type: "startGame",
+        type: "gameStart",
       };
 
       websocket.send(JSON.stringify(message));

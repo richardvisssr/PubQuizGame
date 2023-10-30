@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { submitAnswer } from "../../reducers/answerReducer";
 import Form from "../Form";
+import { fetchCurrentQuestionsNumber } from "../../reducers/roundReducer";
 
 const QuestionAnswer = () => {
   const [answer, setAnswer] = useState(""); // Use an empty string as the initial state for the answer
@@ -14,6 +15,7 @@ const QuestionAnswer = () => {
   const [websocket, setWebsocket] = useState(null);
   const { code } = useParams();
   const { roundNumber } = useParams();
+  const questionNumber = useSelector((state) => state.round.questionNumber);
 
   const initWebSocket = () => {
     if (!websocket) {
@@ -28,8 +30,12 @@ const QuestionAnswer = () => {
         const message = JSON.parse(event.data);
         switch (message.type) {
           case "timerDone":
+            if (questionNumber <= 12) {
             // Wanneer de timer klaar is, stuur een antwoord naar de server
             navigate(`/waitingScreenQuestion/${code}/${roundNumber}`);
+            } else {
+              navigate(`/waitingScreen/${code}`);
+            }
             break;
 
           // Voeg hier extra gevallen toe om andere soorten berichten te verwerken
@@ -50,6 +56,7 @@ const QuestionAnswer = () => {
 
   useEffect(() => {
     initWebSocket();
+    dispatch(fetchCurrentQuestionsNumber());
   }, []);
 
   const handleInputChange = (event) => {

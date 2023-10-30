@@ -9,8 +9,8 @@ export const fetchScore = async (teamId) => {
 const teamSlice = createSlice({
   name: "team",
   initialState: {
-    id: "1",
-    name: "teamA",
+    id: "",
+    name: "",
     score: 0,
   },
   reducers: {

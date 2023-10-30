@@ -56,6 +56,16 @@ wss.on('connection', (ws) => {
           const newAnswerMessage = { type: 'answer-ack', message: `${JSON.stringify(newData)}` };
           wss.broadcast(newAnswerMessage, ws);
           break;
+
+        case 'gameStart': 
+          const gameStartMessage = { type: 'gameStart', message: `${receivedMessage.message}` };
+          wss.broadcast(gameStartMessage, ws);
+          break;
+
+        case 'newQuestion':
+          const questionMessage = { type: 'newQuestion', message: `${receivedMessage.message}` };
+          wss.broadcast(questionMessage, ws);
+          break;
         case 'newTeamRegistered':
           const teamName = receivedMessage.data.name;
           const teamId = receivedMessage.data.id;

@@ -2,36 +2,32 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import SubmitButton from "../SubmitButton";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCurrentQuestionsNumber } from "../../reducers/roundReducer";
+
 
 function Game() {
   const [acceptedAnswers, setAcceptedAnswers] = useState([]);
-  const [answers, setAnswers] = useState([
-    {
-      teamId: 1,
-      answer: "Dummy Answer 1",
-      teamName: "Team A",
-    },
-    {
-      teamId: 1,
-      answer: "Dummy Answer 1",
-      teamName: "Team A",
-    },
-    {
-      teamId: 2,
-      answer: "Dummy Answer 2",
-      teamName: "Team B",
-    },
-    // Voeg meer dummy antwoorden toe zoals hierboven
-  ]);
+  const [answers, setAnswers] = useState([]);
   const { code } = useParams();
-  const { questionNumber } = useParams();
-  let { roundNumber } = useParams();
+  const questionNumber = useSelector((state) => state.round.questionNumber);
+  // const { roundNumber } = useParams();
+  const roundNumber = useSelector((state) => state.round.roundNumber);
   const [websocket, setWebsocket] = useState(null);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   //////??????? ALS score === 1 DAN verhoog score van team met 1
   function handleAcceptAnswer(answer) {
+    // Voeg het geaccepteerde antwoord toe aan de 'acceptedAnswers'
     setAcceptedAnswers((prevAnswers) => [...prevAnswers, answer]);
+    
+    // Leeg de antwoorden voor hetzelfde team
+    setAnswers((prevAnswers) =>
+      prevAnswers.filter((a) => a.teamId !== answer.teamId)
+    );
+  
+    // Stuur een verzoek om de score van het team met 1 te verhogen
     fetch(`/team/${answer.teamId}`, {
       method: "PUT",
       headers: {
@@ -86,32 +82,49 @@ function Game() {
 
   useEffect(() => {
     initWebSocket();
-  }, []);
+    dispatch(fetchCurrentQuestionsNumber());
+  }, [navigate]);
 
   const handleSubmit = () => {
     if (websocket) {
       if (questionNumber <= 12) {
-        const nextQuestionNumber = questionNumber + 1;
+        // Stuur een PUT-verzoek om het volgende vraagnummer bij te werken
+        fetch(`/quizzes/${code}/${roundNumber}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ questionNumber: questionNumber + 1 }),
+        });
+  
+        // Verstuur een WebSocket-bericht om een nieuwe vraag aan te kondigen
         const message = {
           type: "newQuestion",
         };
-
-        navigate(`/game/${code}/${roundNumber}/${nextQuestionNumber}`);
+        websocket.send(JSON.stringify(message));
+  
+        // Navigeer naar de volgende vraag
+        setAnswers([]);
+        setAcceptedAnswers([]);
+        navigate(`/game/${code}/${roundNumber}/${questionNumber}`);
       } else {
+        // Stuur een WebSocket-bericht om een nieuwe ronde aan te kondigen
         const message = {
           type: "newRound",
         };
         websocket.send(JSON.stringify(message));
-        const nextRoundNumber = roundNumber + 1;
+  
+        // Stuur een PUT-verzoek om de ronde bij te werken
         fetch(`/quizzes`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ code, round: nextRoundNumber }),
+          body: JSON.stringify({ code, round: roundNumber + 1 }),
         })
           .then(() => {
-            navigate(`/setup/${code}/${nextRoundNumber}`);
+            // Navigeer naar de volgende ronde-setup
+            navigate(`/setup/${code}/${roundNumber}`);
           })
           .catch((error) => {
             console.error("Error updating round:", error);
@@ -119,6 +132,7 @@ function Game() {
       }
     }
   };
+  
 
   return (
     <div className="container mx-auto p-4">

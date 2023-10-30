@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { QuestionSelect } from "./Approve";
 import SubmitButton from "../SubmitButton";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
 import { setSelectedQuestionsReducer } from "../../reducers/roundReducer";
+import { useNavigate, useParams } from "react-router-dom";
+import { QuestionSelect } from "./Approve";
 
-const NewRound = () => {
-  const questions = useSelector(
-    (state) => state.round.filterdQuestionsFromCategory
-  );
+const Approve = () => {
   const [selectedQuestions, setSelectedQuestions] = useState([]);
+  const [websocket, setWebsocket] = useState(null);
   const { code } = useParams();
   const { roundNumber } = useParams();
-  const [websocket, setWebsocket] = useState(null);
+
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const questions = useSelector((state) =>
+    state.round.filterdQuestionsFromCategory.map((item) => item.question)
+  );
 
   const initWebSocket = () => {
     if (!websocket) {
@@ -21,17 +24,6 @@ const NewRound = () => {
 
       ws.onopen = () => {
         console.log("WebSocket connection is open!");
-      };
-
-      ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-
-        // Check the type of the message and process the updated teams
-        if (data.type === "newTeamRegistered") {
-          // Assuming the teams data is provided in the message
-          const updatedTeams = data.teams; // Update the teams state with the new team data
-          setTeams(updatedTeams);
-        }
       };
 
       ws.onclose = () => {
@@ -46,20 +38,32 @@ const NewRound = () => {
     initWebSocket();
   }, []);
 
+  const handleRemoveQuiz = () => {
+    fetch(`/quizzes/${code}`, {
+      method: "DELETE",
+    });
+  };
+
   const handleSelectQuestion = (event) => {
+    // Haal de geselecteerde vraag-ID's op uit het geselecteerde opties-element
     const selectedQuestionIds = Array.from(
       event.target.selectedOptions,
       (option) => option.value
     );
+
+    // Filter de vragen op basis van de geselecteerde vraag-ID's
     const selectedQuestions = questions.filter((question) =>
-      selectedQuestionIds.includes(question.question)
+      selectedQuestionIds.includes(question)
     );
+
+    // Stel de geselecteerde vragen in als de nieuwe staat
     setSelectedQuestions(selectedQuestions);
   };
+
   const handleStartGame = () => {
     if (websocket) {
       const message = {
-        type: "startGame",
+        type: "gameStart",
       };
 
       websocket.send(JSON.stringify(message));
@@ -73,13 +77,8 @@ const NewRound = () => {
         body: JSON.stringify({ question: selectedQuestions }),
       };
     dispatch(setSelectedQuestionsReducer(selectedQuestions)); // Now it should pass the entire question objects
-    navigate(`/game/${code}/${roundNumber}`);
-  };
-
-  const handleRemoveQuiz = () => {
-    fetch(`/quizzes/${code}`, {
-      method: "DELETE",
-    });
+    navigate(`/game/${code}/${roundNumber}/1`);
+    console.log(selectedQuestions);
   };
 
   return (
@@ -88,10 +87,11 @@ const NewRound = () => {
         questions={questions}
         onSelectQuestion={handleSelectQuestion}
       />
-      <SubmitButton label="End Game" onClick={handleRemoveQuiz} />
+
+      <SubmitButton label="Delete Quiz" onClick={handleRemoveQuiz} />
       <SubmitButton label="Start Game" onClick={handleStartGame} />
     </div>
   );
 };
 
-export default NewRound;
+export default Approve;
