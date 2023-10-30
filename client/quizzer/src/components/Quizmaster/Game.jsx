@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import SubmitButton from "../SubmitButton";
 
 function Game() {
   const [acceptedAnswers, setAcceptedAnswers] = useState([]);
@@ -11,10 +12,10 @@ function Game() {
       teamName: "Team A",
     },
     {
-        teamId: 1,
-        answer: "Dummy Answer 1",
-        teamName: "Team A",
-      },
+      teamId: 1,
+      answer: "Dummy Answer 1",
+      teamName: "Team A",
+    },
     {
       teamId: 2,
       answer: "Dummy Answer 2",
@@ -28,7 +29,7 @@ function Game() {
   const [websocket, setWebsocket] = useState(null);
 
   const navigate = useNavigate();
-//////??????? ALS score === 1 DAN verhoog score van team met 1
+  //////??????? ALS score === 1 DAN verhoog score van team met 1
   function handleAcceptAnswer(answer) {
     setAcceptedAnswers((prevAnswers) => [...prevAnswers, answer]);
     fetch(`/team/${answer.teamId}`, {
@@ -45,8 +46,10 @@ function Game() {
   }
 
   const removeOldAnswersForTeam = (teamId) => {
-    setAnswers((prevAnswers) => prevAnswers.filter((answer) => answer.teamId !== teamId));
-  }
+    setAnswers((prevAnswers) =>
+      prevAnswers.filter((answer) => answer.teamId !== teamId)
+    );
+  };
 
   const initWebSocket = () => {
     if (!websocket) {
@@ -59,35 +62,13 @@ function Game() {
       ws.onmessage = (event) => {
         const message = JSON.parse(event.data);
         switch (message.type) {
-          case "answerSubmitted":
+          case "answer-ack":
             const newAnswer = message.data;
             if (answers.some((answer) => answer.teamId === newAnswer.teamId)) {
-                // Als hetzelfde team al een antwoord heeft ingediend, verwijder het oude antwoord
-                removeOldAnswersForTeam(newAnswer.teamId);
-              }
-            setAnswers((prevAnswers) => [...prevAnswers, newAnswer]);
-            break;
-
-          case "timerDone":
-            if (questionNumber <= 12) {
-                const nextQuestionNumber = questionNumber + 1;
-              navigate(`/game/${code}/${roundNumber}/${nextQuestionNumber}`);
-            } else {
-              const nextRoundNumber = roundNumber + 1;
-              fetch(`/quizzes`, {
-                method: "PUT",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ code, round: nextRoundNumber }),
-              })
-                .then(() => {
-                  navigate(`/setup/${code}/${nextRoundNumber}`);
-                })
-                .catch((error) => {
-                  console.error("Error updating round:", error);
-                });
+              // Als hetzelfde team al een antwoord heeft ingediend, verwijder het oude antwoord
+              removeOldAnswersForTeam(newAnswer.teamId);
             }
+            setAnswers((prevAnswers) => [...prevAnswers, newAnswer]);
             break;
 
           default:
@@ -106,6 +87,38 @@ function Game() {
   useEffect(() => {
     initWebSocket();
   }, []);
+
+  const handleSubmit = () => {
+    if (websocket) {
+      if (questionNumber <= 12) {
+        const nextQuestionNumber = questionNumber + 1;
+        const message = {
+          type: "newQuestion",
+        };
+
+        navigate(`/game/${code}/${roundNumber}/${nextQuestionNumber}`);
+      } else {
+        const message = {
+          type: "newRound",
+        };
+        websocket.send(JSON.stringify(message));
+        const nextRoundNumber = roundNumber + 1;
+        fetch(`/quizzes`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ code, round: nextRoundNumber }),
+        })
+          .then(() => {
+            navigate(`/setup/${code}/${nextRoundNumber}`);
+          })
+          .catch((error) => {
+            console.error("Error updating round:", error);
+          });
+      }
+    }
+  };
 
   return (
     <div className="container mx-auto p-4">
@@ -148,6 +161,7 @@ function Game() {
           </li>
         ))}
       </ul>
+      <SubmitButton label="Next Question" onClick={handleSubmit} />
     </div>
   );
 }

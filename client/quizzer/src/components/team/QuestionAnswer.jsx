@@ -36,11 +36,6 @@ const QuestionAnswer = () => {
 
           case "timerDone":
             // Wanneer de timer klaar is, stuur een antwoord naar de server
-            const submitMessage = {
-              type: "submitAnswer",
-              data: { teamId, teamName , answer },
-            };
-            websocket.send(JSON.stringify(submitMessage));
             navigate(`/waitingScreenQuestion/${code}/${roundNumber}`);
             break;
 
@@ -76,7 +71,13 @@ const QuestionAnswer = () => {
       return;
     }
 
-    setAnswer(answer);
+    if (websocket) {
+    const submitMessage = {
+      type: "submitAnswer",
+      data: { teamId, teamName , answer },
+    };
+    websocket.send(JSON.stringify(submitMessage));
+  }
 
     // Dispatch the submitAnswer action here to update the Redux state
     dispatch(submitAnswer({ teamId, teamName ,answer })); // Pass an object with teamId and answer

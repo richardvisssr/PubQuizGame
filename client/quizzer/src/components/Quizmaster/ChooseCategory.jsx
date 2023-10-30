@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
 import SubmitButton from "../SubmitButton";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { setQuestions } from "../../reducers/roundReducer";
 import { useNavigate, useParams } from "react-router-dom";
-import { fetchQuestions } from "../../reducers/quizmasterReducer";
 
 const ChooseCategory = () => {
   const [selectedCategories, setSelectedCategories] = useState([]); // Geselecteerde categorieën als een array
@@ -17,10 +16,6 @@ const ChooseCategory = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(fetchQuestions());
-  }, []);
 
   const handleCategoryChange = (event) => {
     const options = event.target.options;

@@ -11,6 +11,7 @@ const TeamList = ({ teams, onRemoveTeam }) => (
     <h2 className="m-5">Teams</h2>
     <ul className="space-y-5">
       {teams.map((team) => (
+        console.log(team.id),
         <li
           key={team.id}
           className="m-5flex items-center space-x-4 bg-green-500 p-3 rounded-full"
@@ -43,7 +44,7 @@ export const QuestionSelect = ({ questions, onSelectQuestion }) => (
           value={question.id}
           className="text-gray-800 hover:bg-blue-100"
         >
-          {question.question}
+          {question}
         </option>
       ))}
     </select>
@@ -62,7 +63,7 @@ const Approve = () => {
   const dispatch = useDispatch();
 
   const questions = useSelector(
-    (state) => state.round.filterdQuestionsFromCategory
+    (state) => state.round.filterdQuestionsFromCategory.map((item) => item.question)
   );
 
   const initWebSocket = () => {
@@ -97,7 +98,7 @@ const Approve = () => {
   }, []);
 
   const handleRemoveTeam = (id) => {
-    fetch(`/quizzes/${code}/${id}`, {
+    fetch(`/teams/${id}`, {
       method: "DELETE",
     });
   };
@@ -109,15 +110,21 @@ const Approve = () => {
   };
 
   const handleSelectQuestion = (event) => {
+    // Haal de geselecteerde vraag-ID's op uit het geselecteerde opties-element
     const selectedQuestionIds = Array.from(
       event.target.selectedOptions,
       (option) => option.value
     );
+  
+    // Filter de vragen op basis van de geselecteerde vraag-ID's
     const selectedQuestions = questions.filter((question) =>
-      selectedQuestionIds.includes(question.question)
+      selectedQuestionIds.includes(question)
     );
+  
+    // Stel de geselecteerde vragen in als de nieuwe staat
     setSelectedQuestions(selectedQuestions);
   };
+  
 
   const handleStartGame = () => {
     if (websocket) {
@@ -136,6 +143,7 @@ const Approve = () => {
     };
     dispatch(setSelectedQuestionsReducer(selectedQuestions)); // Now it should pass the entire question objects
     navigate(`/game/${code}/${roundNumber}/1`);
+    console.log(selectedQuestions);
   };
 
   return (

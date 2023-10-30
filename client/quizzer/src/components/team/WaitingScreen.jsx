@@ -27,7 +27,9 @@ const WaitingScreen = ({ waiting }) => {
         const message = JSON.parse(event.data);
         dispatch(fetchRound());
 
-        if (message.type === "gameStart") {
+        if (message.type === "gameStart" || message.type === "newQuestion") {
+          navigate(`/questionScreen/${code}/${roundNumber}`);
+        } else if( message.type === "newQuestion"){
           navigate(`/questionScreen/${code}/${roundNumber}`);
         }
       };
@@ -44,18 +46,6 @@ const WaitingScreen = ({ waiting }) => {
   useEffect(() => {
     // dispatch(fetchScore(teamId));
     initWebSocket();
-
-     // Add a timer for questions if waiting for questions
-     if (waiting === "questions") {
-      // Set a timer for 10 seconds
-      const timer = setTimeout(() => {
-        // Navigate to the next screen after the timer expires
-        navigate(`/questionScreen/${code}/${roundNumber}`);
-      }, 10000); // 10,000 milliseconds = 10 seconds
-
-      // Clean up the timer when the component unmounts
-      return () => clearTimeout(timer);
-    }
   }, []);
 
   const renderContent = () => {

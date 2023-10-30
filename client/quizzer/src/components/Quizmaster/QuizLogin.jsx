@@ -1,13 +1,15 @@
 import React, { useState } from "react"; // Add the import statement for useEffect
 import Form from "../Form";
 import { useNavigate } from "react-router-dom";
-
+import { useDispatch } from "react-redux";
+import { fetchQuestions } from "../../reducers/quizmasterReducer";
 
 function QuizLogin() {
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleInputChange = (event) => {
     setCode(event.target.value);
@@ -33,9 +35,7 @@ function QuizLogin() {
       // Handle any errors that occur during the request
       console.error("Error creating quiz:", error);
     }
-
     dispatch(fetchQuestions());
-
     navigate(`/setup/${code}/1`);
 
   };
