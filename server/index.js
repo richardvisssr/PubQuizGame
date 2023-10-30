@@ -71,7 +71,7 @@ wss.on('connection', (ws) => {
             .then(response => {
               if (response.ok) {
                 const userAckMessage = { type: 'team-ack', message: `${requestData}` };
-                const quizMasterAckMessage = { type: 'newTeamRegistered', message: `${JSON.stringify(requestData)}` };
+                const quizMasterAckMessage = { type: 'newTeam', message: `${JSON.stringify(requestData)}` };
 
                 wss.broadcast(quizMasterAckMessage, ws);
                 ws.send(JSON.stringify(userAckMessage));
