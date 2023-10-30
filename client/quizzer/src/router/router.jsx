@@ -12,6 +12,13 @@ import NewRound from "../components/Quizmaster/NewRound";
 import Game from "../components/Quizmaster/Game";
 
 const Router = () => {
+  const teams = [
+    { name: 'Team A', score: 100 },
+    { name: 'Team B', score: 80 },
+    { name: 'Team C', score: 120 },
+    { name: 'Team D', score: 90 },
+    { name: 'Team E', score: 110 },
+  ];
   return (
     <Routes>
       <Route path="/quizmaster" element={<QuizLogin />} />

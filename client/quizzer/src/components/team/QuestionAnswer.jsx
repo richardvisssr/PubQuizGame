@@ -15,7 +15,6 @@ const QuestionAnswer = () => {
   const { code } = useParams();
   const { roundNumber } = useParams();
 
-
   const initWebSocket = () => {
     if (!websocket) {
       const ws = new WebSocket("ws://localhost:3000"); // Update with your server URL
@@ -28,12 +27,6 @@ const QuestionAnswer = () => {
       ws.onmessage = (event) => {
         const message = JSON.parse(event.data);
         switch (message.type) {
-          case "answerSubmitted":
-            console.log("Answer submitted:", message.data);
-            // Hier kun je de serverbevestiging van de antwoordindiening afhandelen
-            // Je wilt mogelijk de UI bijwerken of verdere acties ondernemen.
-            break;
-
           case "timerDone":
             // Wanneer de timer klaar is, stuur een antwoord naar de server
             navigate(`/waitingScreenQuestion/${code}/${roundNumber}`);
@@ -69,6 +62,18 @@ const QuestionAnswer = () => {
     if (answer.trim() === "") {
       setError("Answer cannot be empty"); // Set an error message if the answer is empty
       return;
+    } else {
+      websocket.send(
+        JSON.stringify({
+          type: "submitAnswer",
+          data: { teamId, teamName, answer },
+        })
+      );
+
+      setAnswer(answer);
+
+      // Dispatch the submitAnswer action here to update the Redux state
+      dispatch(submitAnswer({ teamId, teamName, answer })); // Pass an object with teamId and answer
     }
 
     if (websocket) {
@@ -82,6 +87,11 @@ const QuestionAnswer = () => {
     // Dispatch the submitAnswer action here to update the Redux state
     dispatch(submitAnswer({ teamId, teamName ,answer })); // Pass an object with teamId and answer
   };
+
+  // Initialize the WebSocket when the component mounts
+  useEffect(() => {
+    initWebSocket();
+  }, []);
 
   return (
     <Form

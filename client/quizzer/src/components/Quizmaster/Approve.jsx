@@ -10,21 +10,18 @@ const TeamList = ({ teams, onRemoveTeam }) => (
   <div>
     <h2 className="m-5">Teams</h2>
     <ul className="space-y-5">
-      {teams.map((team) => (
-        console.log(team.id),
-        <li
-          key={team.id}
-          className="m-5flex items-center space-x-4 bg-green-500 p-3 rounded-full"
-        >
-          <span className="text-white">{team.name}</span>
-          <button
-            className="text-white bg-red-500 rounded-full p-2"
-            onClick={() => onRemoveTeam(team.id)}
-          >
+    {teams.map((team) => {
+      console.log("Team Data:", team); // Add this line to log the team data
+
+      return (
+        <li key={team.teamId} className="m-5 flex items-center space-x-4 bg-green-500 p-3 rounded-full"        >
+          <span className="text-white">Team Name: {team.name}</span>
+          <button className="text-white bg-red-500 rounded-full p-2" onClick={() => onRemoveTeam(team.teamId)}>
             X
           </button>
         </li>
-      ))}
+      );
+    })}
     </ul>
   </div>
 );
@@ -78,10 +75,10 @@ const Approve = () => {
         const data = JSON.parse(event.data);
 
         // Check the type of the message and process the updated teams
-        if (data.type === "newTeamRegistered") {
+        if (data.type === "newTeam") {
           // Assuming the teams data is provided in the message
-          const updatedTeams = data.teams; // Update the teams state with the new team data
-          setTeams(updatedTeams);
+          const teamData = JSON.parse(data.message);
+          setTeams((prevTeams) => [...prevTeams, teamData]);
         }
       };
 

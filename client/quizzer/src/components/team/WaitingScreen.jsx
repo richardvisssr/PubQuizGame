@@ -31,6 +31,8 @@ const WaitingScreen = ({ waiting }) => {
           navigate(`/questionScreen/${code}/${roundNumber}`);
         } else if( message.type === "newQuestion"){
           navigate(`/questionScreen/${code}/${roundNumber}`);
+        } else if (message.type === "team-ack"){
+          console.log(message.message);
         }
       };
 

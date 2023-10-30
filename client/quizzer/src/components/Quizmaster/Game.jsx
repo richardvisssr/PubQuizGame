@@ -63,7 +63,7 @@ function Game() {
         const message = JSON.parse(event.data);
         switch (message.type) {
           case "answer-ack":
-            const newAnswer = message.data;
+            const newAnswer = JSON.parse(message.message);
             if (answers.some((answer) => answer.teamId === newAnswer.teamId)) {
               // Als hetzelfde team al een antwoord heeft ingediend, verwijder het oude antwoord
               removeOldAnswersForTeam(newAnswer.teamId);
