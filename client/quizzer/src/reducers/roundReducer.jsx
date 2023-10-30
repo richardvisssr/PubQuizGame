@@ -19,11 +19,20 @@ export const fetchCurrentQuestionsNumber = createAsyncThunk(
   }
 );
 
+export const fetchSelectedQuestions = createAsyncThunk( 
+  "round/fetchSelectedQuestions",
+  async () => {
+    const response = await fetch(`http://localhost:3000/quiz/${code}/${roundNumber}/questions`);
+      const data = await response.json();
+      return data;
+  }
+);
+
 const roundSlice = createSlice({
   name: "round",
   initialState: {
     filterdQuestionsFromCategory: [],
-    selectedQuestions: [],
+    selectedQuestions: ['kaas','brood','boter'],
     roundNumber: 1,
     questionNumber: 1,
   },
@@ -44,6 +53,9 @@ const roundSlice = createSlice({
     },
     [fetchCurrentQuestionsNumber.fulfilled]: (state, action) => {
       state.questionNumber = action.payload;
+    },
+    [fetchSelectedQuestions.fulfilled]: (state, action) => {
+      state.selectedQuestions = action.payload;
     },
   },
 });

@@ -10,6 +10,8 @@ import ChooseCategory from "../components/Quizmaster/ChooseCategory";
 import Approve from "../components/Quizmaster/Approve";
 import NewRound from "../components/Quizmaster/NewRound";
 import Game from "../components/Quizmaster/Game";
+import Quiz from "../components/quiz/Quiz";
+import Leaderboard from "../components/Quiz/Leaderboard";
 
 const Router = () => {
 
@@ -25,6 +27,8 @@ const Router = () => {
       <Route path="/waitingScreen/:code" element={<WaitingScreen waiting={"game"} />}/>
       <Route path="/questionScreen/:code/:roundNumber" element={<QuestionAnswer />}/>
       <Route path="/waitingScreenQuestion/:code/:roundNumber" element={<WaitingScreen waiting={"questions"} />}/>
+      <Route path="/quiz/:code/:roundNumber" element={<Quiz />}/>
+      <Route path="/leaderboard/:code/:roundNumber" element={<Leaderboard />}/>
     </Routes>
   );
 };

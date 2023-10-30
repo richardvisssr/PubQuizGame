@@ -14,7 +14,7 @@ export default function CountdownTimer() {
     if (remainingTime === 0) {
       clearInterval(timer);
 
-      navigate("/leaderboard/1");
+      navigate("/leaderboard/123/1");
     }
 
     return () => {
